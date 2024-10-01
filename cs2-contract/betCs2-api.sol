@@ -31,12 +31,12 @@ contract betteam {
     uint256 public netPrize;
     mapping(address => Bet) public bets;
     address[] public keys; 
-    //  contract is open from 2024-09-21 20:00:00 until 2024-09-22 14:00:00 - game time (eg.)
+    //  contract is open from 2024-09-21 20:00:00 until 2024-10-30 00:00:00 - game time (eg.)
     constructor() {
         owner = msg.sender;
         dispute = Dispute({
-            beginAt: 1726959600000, // when can sender do a bet
-            endAt: 1727024400000, // when is contract closed
+            beginAt: 1726959600000,
+            endAt: 1730257200000,
             team1: "Eternal fire",
             team2: "mibr",
             image1: "https://en.wikipedia.org/wiki/Eternal_Fire_(esports)#/media/File:Eternal_fire_logo.png",
@@ -58,6 +58,11 @@ contract betteam {
         require(msg.sender != owner, "Owner can't bet");
         require(bets[msg.sender].exists == false, "Sender alredy has a bet");
         
+// BUG
+// by now if clientt bet more than once, 
+// the previous bet is lost but the total prize increases 
+
+//TODO fix multiple bets for clients
         Bet memory bet;
         bet.ammount = msg.value;
         bet.team = team;
@@ -73,7 +78,7 @@ contract betteam {
     }
 
     function endBet(uint256 winner) external {
-        require(block.timestamp > dispute.endAt, "Too soon to end dispute");
+        require(block.timestamp < dispute.endAt, "Too soon to end dispute");
         require(msg.sender == owner, "Sender is not the owner");
         require(winner == 1 || winner == 2, "Invalid winner");
         require(dispute.winner == 0, "Dispute closed");
