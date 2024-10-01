@@ -35,8 +35,8 @@ contract betteam {
     constructor() {
         owner = msg.sender;
         dispute = Dispute({
-            beginAt: 1726959600000,
-            endAt: 1727024400000,
+            beginAt: 1726959600000, // when can sender do a bet
+            endAt: 1727024400000, // when is contract closed
             team1: "Eternal fire",
             team2: "mibr",
             image1: "https://en.wikipedia.org/wiki/Eternal_Fire_(esports)#/media/File:Eternal_fire_logo.png",
@@ -58,11 +58,6 @@ contract betteam {
         require(msg.sender != owner, "Owner can't bet");
         require(bets[msg.sender].exists == false, "Sender alredy has a bet");
         
-// BUG
-// by now if clientt bet more than once, 
-// the previous bet is lost but the total prize increases 
-
-//TODO fix multiple bets for clients
         Bet memory bet;
         bet.ammount = msg.value;
         bet.team = team;
