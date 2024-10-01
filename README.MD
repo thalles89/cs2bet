@@ -1,6 +1,6 @@
 # Projeto web 3
 
-Bet candidate is a project to WEB3 
+CS2BET is a project to WEB3 
 
  original from [Github](https://github.com/luiztools-cursos/web3-week-5/tree/f2bcdc3cd77192668655413839dc07f899711cf1)
 
