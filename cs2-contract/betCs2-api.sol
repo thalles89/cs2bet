@@ -19,6 +19,7 @@ struct Bet {
     uint256 team;
     uint256 timestamp;
     uint256 claimmed;
+    bool exists;
 }
 
 contract betteam {
@@ -55,6 +56,7 @@ contract betteam {
         require(dispute.winner == 0, "Dispute closed");
         require(team == 1 || team == 2, "Invalid team");
         require(msg.sender != owner, "Owner can't bet");
+        require(bets[msg.sender].exists == false, "Sender alredy has a bet");
         
 // BUG
 // by now if clientt bet more than once, 
@@ -65,6 +67,7 @@ contract betteam {
         bet.ammount = msg.value;
         bet.team = team;
         bet.timestamp = block.timestamp;
+        bet.exists = true;
         bets[msg.sender] = bet;
 
         if (team == 1) {
