@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.26;
-import "@openzeppelin/contracts/utils/Strings.sol";
 
 struct Dispute {
     uint256 beginAt;
@@ -14,6 +13,7 @@ struct Dispute {
     uint256 totalVotes1;
     uint256 totalVotes2;
     uint256 winner;
+    bool commissionPayed;
 }
 
 struct Bet {
@@ -25,8 +25,6 @@ struct Bet {
 }
 
 contract betteam {
-    // on blockchain we only have integers, so it`s used the smallest currency ammount
-
     address owner;
     uint256 constant fee = 1000; // 10% 4 zeros scale
     Dispute public dispute;
@@ -42,7 +40,6 @@ contract betteam {
     uint256 immutable TIMESTAMPBEGIN = 1726959600000;
     uint256 immutable TIMESTAMPEND = 1730257200000;
     
-    //  contract is open from 2024-09-21 20:00:00 until 2024-10-30 00:00:00 - game time (eg.)
     constructor() {
         owner = msg.sender;
         dispute = Dispute({
@@ -56,16 +53,16 @@ contract betteam {
             totalAmmount2: 0,
             totalVotes1: 0,
             totalVotes2: 0,
-            winner: 0
+            winner: 0,
+            commissionPayed: false
         });
     }
 
     function doBet(uint256 team) public payable {
-        //require works diffrently than the if statement.
-        //syntax is condition required, error message
+
         require(block.timestamp < dispute.beginAt, "too soon to bet");
         require(msg.value > 0, "Invalid Value");
-        // require(block.timestamp > dispute.endAt, "to late to bet");
+        require(block.timestamp < dispute.endAt, "too late to bet");
         require(dispute.winner == 0, "Dispute closed");
         require(team == 1 || team == 2, "Invalid team");
         require(msg.sender != owner, "Owner can't bet");
@@ -101,7 +98,7 @@ contract betteam {
         netPrize = grossPrize - commission;
     }
 
-    function claim() external payable {
+    function claim() external {
         Bet memory bet = bets[msg.sender];
 
         require(dispute.winner > 0 && dispute.winner == bet.team && bet.claimmed == 0, "Invalid Claim");
@@ -116,9 +113,11 @@ contract betteam {
         payable(msg.sender).transfer(individualPrize);
     }
 
-    function withdrawComission() external payable {
+    function withdrawComission() external {
         require(msg.sender == owner, "You're not the Contract owner");
         require(dispute.winner > 0, "Contract is not Closed yet");
+        require(dispute.commissionPayed == false, "Owner already got his prize");
+        dispute.commissionPayed = true;
         payable(owner).transfer(commission);
     }
 
