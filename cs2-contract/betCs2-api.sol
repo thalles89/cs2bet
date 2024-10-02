@@ -101,7 +101,7 @@ contract betteam {
         netPrize = grossPrize - commission;
     }
 
-    function claim() external {
+    function claim() external payable {
         Bet memory bet = bets[msg.sender];
 
         require(dispute.winner > 0 && dispute.winner == bet.team && bet.claimmed == 0, "Invalid Claim");
