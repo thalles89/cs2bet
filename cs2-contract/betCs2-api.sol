@@ -116,7 +116,7 @@ contract betteam {
         payable(msg.sender).transfer(individualPrize);
     }
 
-    function withdrawComission() external {
+    function withdrawComission() external payable {
         require(msg.sender == owner, "You're not the Contract owner");
         require(dispute.winner > 0, "Contract is not Closed yet");
         payable(owner).transfer(commission);
@@ -142,12 +142,12 @@ contract betteam {
         dispute.team2 = team;
     }
 
-    function updateContractBeginValidity(uint256 timestamp)  external {
+    function updateBeginValidity(uint256 timestamp)  external {
         dispute.beginAt = timestamp ;
         require(msg.sender == owner, "You're not the Contract owner");
     }
 
-    function updateContractEndValidity(uint256 timestamp)  external {
+    function updateEndValidity(uint256 timestamp)  external {
         require(msg.sender == owner, "You're not the Contract owner");
         dispute.endAt = timestamp ;
     }
