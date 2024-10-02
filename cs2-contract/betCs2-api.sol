@@ -9,8 +9,10 @@ struct Dispute {
     string team2;
     string image1;
     string image2;
-    uint256 total1;
-    uint256 total2;
+    uint256 totalAmmount1;
+    uint256 totalAmmount2;
+    uint256 totalVotes1;
+    uint256 totalVotes2;
     uint256 winner;
 }
 
@@ -26,23 +28,34 @@ contract betteam {
     // on blockchain we only have integers, so it`s used the smallest currency ammount
 
     address owner;
-    uint256 fee = 1000; // 10% 4 zeros scale
+    uint256 constant fee = 1000; // 10% 4 zeros scale
     Dispute public dispute;
     uint256 public netPrize;
     mapping(address => Bet) public bets;
-    address[] public keys; 
+    uint256 commission;
+
+    string team1 = "";
+    string team2 = "";
+    string image1 = "";
+    string image2 = "";
+
+    uint256 immutable TIMESTAMPBEGIN = 1726959600000;
+    uint256 immutable TIMESTAMPEND = 1730257200000;
+    
     //  contract is open from 2024-09-21 20:00:00 until 2024-10-30 00:00:00 - game time (eg.)
     constructor() {
         owner = msg.sender;
         dispute = Dispute({
-            beginAt: 1726959600000,
-            endAt: 1730257200000,
-            team1: "Eternal fire",
-            team2: "mibr",
-            image1: "https://en.wikipedia.org/wiki/Eternal_Fire_(esports)#/media/File:Eternal_fire_logo.png",
-            image2: "https://pt.wikipedia.org/wiki/MIBR#/media/Ficheiro:Made_In_Brazil_logo.png",
-            total1: 0,
-            total2: 0,
+            beginAt: TIMESTAMPBEGIN,
+            endAt: TIMESTAMPEND,
+            team1: team1,
+            team2: team2,
+            image1: image1,
+            image2: image2,
+            totalAmmount1: 0,
+            totalAmmount2: 0,
+            totalVotes1: 0,
+            totalVotes2: 0,
             winner: 0
         });
     }
@@ -58,11 +71,6 @@ contract betteam {
         require(msg.sender != owner, "Owner can't bet");
         require(bets[msg.sender].exists == false, "Sender alredy has a bet");
         
-// BUG
-// by now if clientt bet more than once, 
-// the previous bet is lost but the total prize increases 
-
-//TODO fix multiple bets for clients
         Bet memory bet;
         bet.ammount = msg.value;
         bet.team = team;
@@ -71,13 +79,16 @@ contract betteam {
         bets[msg.sender] = bet;
 
         if (team == 1) {
-            dispute.total1 += msg.value;
+            dispute.totalAmmount1 += msg.value;
+            dispute.totalVotes1++;
         } else {
-            dispute.total2 += msg.value;
+            dispute.totalAmmount2 += msg.value;
+            dispute.totalVotes2++;        
         }
+
     }
 
-    function endBet(uint256 winner) external {
+    function endBets(uint256 winner) external {
         require(block.timestamp < dispute.endAt, "Too soon to end dispute");
         require(msg.sender == owner, "Sender is not the owner");
         require(winner == 1 || winner == 2, "Invalid winner");
@@ -85,30 +96,55 @@ contract betteam {
 
         dispute.winner = winner;
 
-        uint256 grossPrize = dispute.total1 + dispute.total2;
-        uint256 commission = (grossPrize * fee) / 1e4;
+        uint256 grossPrize = dispute.totalAmmount1 + dispute.totalAmmount2;
+        commission = (grossPrize * fee) / 1e4;
         netPrize = grossPrize - commission;
-
-        payable(owner).transfer(commission);
     }
 
     function claim() external {
         Bet memory bet = bets[msg.sender];
 
-        require(
-            dispute.winner > 0 &&
-                dispute.winner == bet.team &&
-                bet.claimmed == 0,
-            "Invalid Claim"
-        );
+        require(dispute.winner > 0 && dispute.winner == bet.team && bet.claimmed == 0, "Invalid Claim");
 
         uint256 winnerAmmount = dispute.winner == 1
-            ? dispute.total1
-            : dispute.total2;
+            ? dispute.totalAmmount1
+            : dispute.totalAmmount2;
+
         uint256 ratio = (bet.ammount * 1e4) / winnerAmmount;
+        
         uint256 individualPrize = (netPrize * ratio) / 1e4;
+        
         bets[msg.sender].claimmed = individualPrize;
+        
         payable(msg.sender).transfer(individualPrize);
     }
 
+    function withdrawComission(address sender) external {
+        require(sender == owner, "You're not the Contract owner");
+        payable(owner).transfer(commission);
+    }
+
+    function chagePhoto1(string memory imageURI) external {
+        dispute.image1 = imageURI;
+    }
+
+    function chagePhoto2(string memory imageURI) external {
+        dispute.image2 = imageURI;
+    }
+
+    function updateTeam1(string memory team) external {
+        dispute.team1 = team;
+    }
+
+    function updateTeam2(string memory team) external {
+        dispute.team2 = team;
+    }
+
+    function updateContractBeginValidity(uint256 timestamp)  external {
+        dispute.beginAt = timestamp ;
+    }
+
+    function updateContractEndValidity(uint256 timestamp)  external {
+        dispute.endAt = timestamp ;
+    }
 }
