@@ -119,32 +119,38 @@ contract betteam {
         payable(msg.sender).transfer(individualPrize);
     }
 
-    function withdrawComission(address sender) external {
-        require(sender == owner, "You're not the Contract owner");
+    function withdrawComission() external {
+        require(msg.sender == owner, "You're not the Contract owner");
         payable(owner).transfer(commission);
     }
 
     function chagePhoto1(string memory imageURI) external {
+        require(msg.sender == owner, "You're not the Contract owner");
         dispute.image1 = imageURI;
     }
 
     function chagePhoto2(string memory imageURI) external {
+        require(msg.sender == owner, "You're not the Contract owner");
         dispute.image2 = imageURI;
     }
 
     function updateTeam1(string memory team) external {
+        require(msg.sender == owner, "You're not the Contract owner");
         dispute.team1 = team;
     }
 
     function updateTeam2(string memory team) external {
+        require(msg.sender == owner, "You're not the Contract owner");
         dispute.team2 = team;
     }
 
     function updateContractBeginValidity(uint256 timestamp)  external {
         dispute.beginAt = timestamp ;
+        require(msg.sender == owner, "You're not the Contract owner");
     }
 
     function updateContractEndValidity(uint256 timestamp)  external {
+        require(msg.sender == owner, "You're not the Contract owner");
         dispute.endAt = timestamp ;
     }
 }
