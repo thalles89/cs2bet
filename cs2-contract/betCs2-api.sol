@@ -111,16 +111,14 @@ contract betteam {
             : dispute.totalAmmount2;
 
         uint256 ratio = (bet.ammount * 1e4) / winnerAmmount;
-        
         uint256 individualPrize = (netPrize * ratio) / 1e4;
-        
         bets[msg.sender].claimmed = individualPrize;
-        
         payable(msg.sender).transfer(individualPrize);
     }
 
     function withdrawComission() external {
         require(msg.sender == owner, "You're not the Contract owner");
+        require(dispute.winner > 0, "Contract is not Closed yet");
         payable(owner).transfer(commission);
     }
 
