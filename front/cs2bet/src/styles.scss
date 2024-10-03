@@ -1,0 +1,11 @@
+/* You can add global styles to this file, and also import other style files */
+body{
+    height: 100%;
+    width:  100%;
+    background-image: url('assets/cs2.jpg');
+    background-repeat: no-repeat;
+    align-items: center;
+    align-content: center;
+}
+/* Importing Bootstrap SCSS file. */
+@import 'bootstrap/scss/bootstrap';

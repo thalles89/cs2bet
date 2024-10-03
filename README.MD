@@ -1,11 +1,10 @@
-# Projeto web 3
-
+# Web 3 Project
 CS2BET is a project to WEB3 
 
  original from [Github](https://github.com/luiztools-cursos/web3-week-5/tree/f2bcdc3cd77192668655413839dc07f899711cf1)
 
  ## API
- Runs under solidity, hosted on [remix](https://remix.ethereum.org/#lang=en&optimize=false&runs=200&evmVersion=null&version=soljson-v0.8.26+commit.8a97fa7a.js)
+Hosted on [remix](https://amoy.polygonscan.com/address/0xe1608f9351dd115d20e352a62b684b9e65ffe53c)
 
  ## Frontend
-Built under react
+Built with Angular 17

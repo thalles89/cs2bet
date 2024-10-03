@@ -32,10 +32,10 @@ contract betteam {
     mapping(address => Bet) public bets;
     uint256 commission;
 
-    string team1 = "Team 1";
-    string team2 = "Team 2";
-    string image1 = "https://www.strafe.com/br/apostas-esports/strafe-news/wp-content/uploads/sites/30/CS2-Valve-lanca-novo-update-veja-detalhes.png";
-    string image2 = "https://s2-techtudo.glbimg.com/9hLtG2DbMA9l11iMODEnBHv94iU=/0x0:1200x603/984x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_08fbf48bc0524877943fe86e43087e7a/internal_photos/bs/2019/i/b/ETfVe9TSWL7BL6NLQZYQ/1535723475188-fb-image.png";
+    string team1 = "Virtus Pro";
+    string team2 = "Furia";
+    string image1 = "https://eslpro.imgix.net/csgo/proleague/wp-content/uploads/2020/01/virtus.pro_.png";
+    string image2 = "https://eslpro.imgix.net/csgo/proleague/wp-content/uploads/2023/03/furia-logo.png";
 
     uint256 immutable TIMESTAMPBEGIN = 1726959600000;
     uint256 immutable TIMESTAMPEND = 1730257200000;
