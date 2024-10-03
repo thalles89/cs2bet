@@ -1,0 +1,46 @@
+.container {
+    width: 95%;
+    height: 50%;
+    margin-top: 2em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.my-card {
+    width: fit-content;
+    height: fit-content;
+    margin-left: 2em;
+    margin-right: 2em;
+}
+
+.bet-btn {
+    color: white;
+    background-color: green;
+    padding: 1em;
+    margin: .3em;
+}
+
+.claim-btn {
+    color: white;
+    background-color: goldenrod;
+    padding: 1em;
+    margin: .3em;
+}
+
+.lost-bet {
+    background-color: brown;
+    
+}
+
+.col {
+    width: fit-content;
+}
+
+.my-card > img {
+    height: 300px;
+}
+
+.row {
+    max-width: 100%;
+}
